@@ -1,49 +1,9 @@
 /* global Virastar, ClipboardJS, Diff, syncscroll */
-document.addEventListener('DOMContentLoaded', function() {
-    var diffButton = document.getElementById('trigger-diff');
-
-    diffButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default anchor behavior
-        // Call your diff function here
-        // This depends on how the diff.min.js works or how you have set up your diff functionality
-        performDiff();
-    });
-
-    function showDifferences() {
-      const inputTextarea = document.getElementById("input");
-      const outputTextarea = document.getElementById("output");
-      const differences = diff_main(inputTextarea.value, outputTextarea.value, { ignoreWhitespace: true });
-    
-      const differencesDiv = document.createElement("div");
-      differencesDiv.className = "column-diff syncscroll";
-      differencesDiv.name = "synctarget";
-      differencesDiv.id = "diff-wrapper";
-      differencesDiv.innerHTML = `<div id="diff" class="wrapper-diff">تفاوت&hellip;</div>`;
-      differencesDiv.querySelector("#diff").innerHTML = diff_prettyHtml(differences);
-    
-      const triggerDiffLink = document.getElementById("trigger-diff");
-      triggerDiffLink.parentNode.insertBefore(differencesDiv, triggerDiffLink.nextSibling);
-    }
-
-document.getElementById("trigger-diff").addEventListener("click", showDifferences);
-    
-    function performDiff() {
-        // Your code to trigger the diff goes here.
-        // For example:
-        var inputText = document.getElementById('input').value;
-        var outputText = document.getElementById('output').value;
-
-        // Assuming diff.min.js has a global function to perform diff and show result
-        var diffResult = diff(inputText, outputText); // Use the actual function from diff.min.js
-        document.getElementById('diff').innerHTML = diffResult; // Display result in the diff container
-    }
-});
 
 (function (w) {
   var virastar;
   var clipboard;
   var app = {
-
     settings: undefined,
     storage: typeof (Storage) !== 'undefined',
 
@@ -197,65 +157,18 @@ document.getElementById("trigger-diff").addEventListener("click", showDifference
       return pre;
     },
 
-    init: function () {
-      var that = this;
-      virastar = new Virastar(this.options);
+    showDifferences: function () {
+      const inputTextarea = document.getElementById("input");
+      const outputTextarea = document.getElementById("output");
+      const differences = Diff.diffChars(inputTextarea.value, outputTextarea.value, { ignoreWhitespace: false });
 
-      this.input.addEventListener('keyup', this.debounce(function () {
-        that.doChange();
-      }, 1000));
+      const differencesDiv = document.createElement("div");
+      differencesDiv.className = "column-diff syncscroll";
+      differencesDiv.name = "synctarget";
+      differencesDiv.id = "diff-wrapper";
+      differencesDiv.innerHTML = `<div id="diff" class="wrapper-diff">تفاوت&hellip;</div>`;
+      differencesDiv.querySelector("#diff").innerHTML = Diff.diffPrettyHtml(differences);
 
-      this.reset.addEventListener('click', function (event) {
-        event.preventDefault();
-        that.removeStorage('options');
-        that.initSettings();
-        that.doChange();
-      });
-
-      this.initSettings();
-      this.initVirastar();
-      this.initClipboard();
-      syncscroll.reset();
-    },
-
-    initSettings: function () {
-      var that = this;
-      this.renderSettings(virastar.defaults);
-
-      this.settings.forEach(function (option) {
-        option.addEventListener('change', function () {
-          that.doChange();
-        });
-      });
-    },
-
-    initVirastar: function () {
-      var initial = this.input.value;
-      var input = this.getStorage(initial, 'text');
-      var options = this.getOptions();
-
-      if (input.trim()) {
-        this.input.value = input;
-        this.doVirastar(input, options);
-      } else {
-        this.doVirastar(initial, options);
-      }
-    },
-
-    initClipboard: function () {
-      clipboard = new ClipboardJS('.copy');
-
-      clipboard.on('success', function (e) {
-        console.log(e);
-      });
-
-      clipboard.on('error', function (e) {
-        console.log(e);
-      });
-    }
-  };
-
-  w.onload = function () {
-    app.init();
-  };
-})(window);
+      const triggerDiffLink = document.getElementById("trigger-diff");
+  triggerDiffLink.parentNode.insertBefore(differencesDiv, triggerDiffLink.nextSibling);
+},
