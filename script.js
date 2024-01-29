@@ -1,4 +1,25 @@
 /* global Virastar, ClipboardJS, Diff, syncscroll */
+document.addEventListener('DOMContentLoaded', function() {
+    var diffButton = document.getElementById('trigger-diff');
+
+    diffButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default anchor behavior
+        // Call your diff function here
+        // This depends on how the diff.min.js works or how you have set up your diff functionality
+        performDiff();
+    });
+
+    function performDiff() {
+        // Your code to trigger the diff goes here.
+        // For example:
+        var inputText = document.getElementById('input').value;
+        var outputText = document.getElementById('output').value;
+
+        // Assuming diff.min.js has a global function to perform diff and show result
+        var diffResult = diff(inputText, outputText); // Use the actual function from diff.min.js
+        document.getElementById('diff').innerHTML = diffResult; // Display result in the diff container
+    }
+});
 
 (function (w) {
   var virastar;
