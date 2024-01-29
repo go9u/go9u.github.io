@@ -9,6 +9,24 @@ document.addEventListener('DOMContentLoaded', function() {
         performDiff();
     });
 
+    function showDifferences() {
+      const inputTextarea = document.getElementById("input");
+      const outputTextarea = document.getElementById("output");
+      const differences = diff_main(inputTextarea.value, outputTextarea.value, { ignoreWhitespace: true });
+    
+      const differencesDiv = document.createElement("div");
+      differencesDiv.className = "column-diff syncscroll";
+      differencesDiv.name = "synctarget";
+      differencesDiv.id = "diff-wrapper";
+      differencesDiv.innerHTML = `<div id="diff" class="wrapper-diff">تفاوت&hellip;</div>`;
+      differencesDiv.querySelector("#diff").innerHTML = diff_prettyHtml(differences);
+    
+      const triggerDiffLink = document.getElementById("trigger-diff");
+      triggerDiffLink.parentNode.insertBefore(differencesDiv, triggerDiffLink.nextSibling);
+    }
+
+document.getElementById("trigger-diff").addEventListener("click", showDifferences);
+    
     function performDiff() {
         // Your code to trigger the diff goes here.
         // For example:
